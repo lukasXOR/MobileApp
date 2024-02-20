@@ -32,7 +32,7 @@ class Weather {
         } catch (Exeception e) {
         }
         }
-        URL WeatherAPIURL = new URL("http://example.com/api/data");
+        URL WeatherAPIURL = new URL("http://example.com/api/datajjjj");
 
         HttpURLConnection connection = (HttpURLConnection) WeatherAPIURL.openConnection();
 
