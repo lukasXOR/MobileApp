@@ -1,40 +1,26 @@
 package com.example.myapplication;
 
+// Weather app
+// The external API I will be using is https://www.weatherapi.com/
+
 import androidx.appcompat.app.AppCompatActivity;
-import android.widget.Button;
-import android.widget.LinearLayout;
+
 import android.widget.TextView;
-import android.view.View;
-import android.graphics.Color;
 import android.os.Bundle;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.util.Random;
-import java.net.URL;
-
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 public class MainActivity extends AppCompatActivity {
+
+    public Entities entities;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        TextView Location = findViewById(R.id.Location);
-        Location.setText("Northampton");
-
-        Weather test = new Weather("HP111BN");
+        entities = new Entities(this);
+        WeatherOperation test = new WeatherOperation("Northampton");
         test.execute();
+
 
         try {
             String response = test.get();
@@ -45,50 +31,15 @@ public class MainActivity extends AppCompatActivity {
             // to access by doing 'class.property' rather then calling a method each time
             WeatherData info = gson.fromJson(response, WeatherData.class);
 
-
-            System.out.println(info.location.name);
+            UpdateInfo(info);
         } catch (Exception e) {e.printStackTrace();}
     }
 
-
-}
-
-
-class Weather extends AsyncTask<Void, Void, String> {
-    private final String location;
-    public Weather(String location) {
-        super();
-        this.location = location;
-    }
-    @Override
-    protected String doInBackground(Void... voids) {
-        StringBuilder response = new StringBuilder();
-
-        try {
-            URL url = new URL("https://api.weatherapi.com/v1/current.json?key=909ca5dbb1a8401f834122709242002&q=" + this.location + "&aqi=");
-
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-            reader.close();
-
-            connection.disconnect();
-
-        } catch (Exception e) {
-            Log.e("HttpTask", "Error", e);
-        }
-        return response.toString();
-    }
-    @Override
-    protected void onPostExecute(String result) {
-        super.onPostExecute(result);
-        // Handle the result, update UI, etc.
-        //Log.d("HttpTask", "Response: " + result);
+    void UpdateInfo(WeatherData WeatherInfo) {
+        entities.LocationName.setText(WeatherInfo.location.name);
+        entities.LocationRegion.setText(WeatherInfo.location.region);
+        entities.Temp.setText(Double.toString(WeatherInfo.current.temp_c) + "°");
+        entities.Condition.setText(WeatherInfo.current.condition.text);
     }
 }
 
