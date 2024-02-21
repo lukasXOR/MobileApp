@@ -20,8 +20,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
-public class MainActivity extends AppCompatActivity {
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,44 +32,63 @@ public class MainActivity extends AppCompatActivity {
 
         TextView Location = findViewById(R.id.Location);
         Location.setText("Northampton");
-        new Weather().execute();
 
+        Weather test = new Weather("HP111BN");
+        test.execute();
+
+        try {
+            String response = test.get();
+            Gson gson = new Gson();
+
+            // Deserialising...
+            // This process lets us parse json into classes making it easier
+            // to access by doing 'class.property' rather then calling a method each time
+            WeatherData info = gson.fromJson(response, WeatherData.class);
+
+
+            System.out.println(info.location.name);
+        } catch (Exception e) {e.printStackTrace();}
     }
 
 
 }
+
+
 class Weather extends AsyncTask<Void, Void, String> {
+    private final String location;
+    public Weather(String location) {
+        super();
+        this.location = location;
+    }
     @Override
     protected String doInBackground(Void... voids) {
         StringBuilder response = new StringBuilder();
-        try {
-            // Create a URL object with the endpoint you want to connect to
-            URL url = new URL("https://api.weatherapi.com/v1/current.json?key=909ca5dbb1a8401f834122709242002&q=NN48LU&aqi=");
 
-            // Open a connection to the URL
+        try {
+            URL url = new URL("https://api.weatherapi.com/v1/current.json?key=909ca5dbb1a8401f834122709242002&q=" + this.location + "&aqi=");
+
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            // Read the response
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
             String line;
             while ((line = reader.readLine()) != null) {
                 response.append(line);
             }
             reader.close();
-            System.out.println("HELLO "+reader);
-            // Disconnect the connection
+
             connection.disconnect();
+
         } catch (Exception e) {
             Log.e("HttpTask", "Error", e);
         }
-        System.out.println("jiih "+response.toString());
         return response.toString();
     }
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
         // Handle the result, update UI, etc.
-        Log.d("HttpTask", "Response: " + result);
+        //Log.d("HttpTask", "Response: " + result);
     }
 }
 
