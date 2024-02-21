@@ -8,11 +8,18 @@ import android.view.View;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.util.Random;
 import java.net.URL;
 
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -22,26 +29,51 @@ public class MainActivity extends AppCompatActivity {
 
         TextView Location = findViewById(R.id.Location);
         Location.setText("Northampton");
-    }
-}
+        new Weather().execute();
 
-class Weather {
-    public static void get() {
+    }
+
+
+}
+class Weather extends AsyncTask<Void, Void, String> {
+    @Override
+    protected String doInBackground(Void... voids) {
+        StringBuilder response = new StringBuilder();
         try {
+            // Create a URL object with the endpoint you want to connect to
+            URL url = new URL("https://api.weatherapi.com/v1/current.json?key=909ca5dbb1a8401f834122709242002&q=NN48LU&aqi=");
 
-        } catch (Exeception e) {
+            // Open a connection to the URL
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            // Read the response
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+            System.out.println("HELLO "+reader);
+            // Disconnect the connection
+            connection.disconnect();
+        } catch (Exception e) {
+            Log.e("HttpTask", "Error", e);
         }
-        }
-        URL WeatherAPIURL = new URL("http://example.com/api/datajjjj");
-
-        HttpURLConnection connection = (HttpURLConnection) WeatherAPIURL.openConnection();
-
-        connection.setRequestMethod("GET");
-
-
-
+        System.out.println("jiih "+response.toString());
+        return response.toString();
+    }
+    @Override
+    protected void onPostExecute(String result) {
+        super.onPostExecute(result);
+        // Handle the result, update UI, etc.
+        Log.d("HttpTask", "Response: " + result);
     }
 }
+
+
+
+
+
 
 class Colors {
     public static int Sunny = 0xFFcfd13d;
