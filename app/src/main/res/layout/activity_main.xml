@@ -86,4 +86,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:layout_editor_absoluteY="4dp" />
 
+    <TextView
+        android:id="@+id/DetailedInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="184dp"
+        android:text="Detailed Information:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/ExtraInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/DetailedInfo" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

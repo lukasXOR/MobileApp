@@ -11,6 +11,7 @@ import java.util.Objects;
 
 public class WeatherOperation extends AsyncTask<Void, Void, String> {
     private final String EndPoint;
+    private final String APIKEY = "909ca5dbb1a8401f834122709242002";
     private String location;
 
     public WeatherOperation(String location) {
@@ -20,7 +21,7 @@ public class WeatherOperation extends AsyncTask<Void, Void, String> {
         } else {
             this.location = location;
         }
-        this.EndPoint = "https://api.weatherapi.com/v1/current.json?key=909ca5dbb1a8401f834122709242002&q=" + this.location + "&aqi=";
+        this.EndPoint = "https://api.weatherapi.com/v1/current.json?key=" + this.APIKEY + "&q=" + this.location + "&aqi=";
     }
     @Override
     protected String doInBackground(Void... voids) {
