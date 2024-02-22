@@ -4,6 +4,7 @@ package com.example.myapplication;
 // The external API I will be using is https://www.weatherapi.com/
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.widget.CompoundButton;
 import android.widget.Switch;
@@ -14,6 +15,7 @@ import android.widget.ToggleButton;
 import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity {
+    public ConstraintLayout main;
     public Entities entities;
     public WeatherData info;
     @Override
@@ -22,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         entities = new Entities(this);
+        main = findViewById(R.id.main);
+
 
         WeatherOperation WeatherOp = new WeatherOperation("Northampton");
         WeatherOp.execute();
@@ -30,11 +34,6 @@ public class MainActivity extends AppCompatActivity {
             String response = WeatherOp.get();
             Gson gson = new Gson();
             System.out.println(response);
-            /*
-             Deserialising...
-             This process lets us parse json into classes making it easier
-             to access by doing 'class.property' rather then calling a method each time
-            */
 
             info = gson.fromJson(response, WeatherData.class);
 
@@ -45,16 +44,14 @@ public class MainActivity extends AppCompatActivity {
         DegreeType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    entities.SetTemp(info.current.temp_f);
-                } else {
-                    entities.SetTemp(info.current.temp_c);
-                }
+                if (isChecked) entities.SetTemp(info.current.temp_f);
+                else entities.SetTemp(info.current.temp_c);
             }
         });
     }
 
     void UpdateInfo(WeatherData WeatherInfo) {
+        main.setBackgroundColor(WeatherColors.GetWeatherInHex(WeatherInfo.current.condition.text));
         entities.LocationName.setText(WeatherInfo.location.name);
         entities.LocationRegion.setText(WeatherInfo.location.region);
         entities.Temp.setText(Double.toString(WeatherInfo.current.temp_c) + "°");
@@ -81,9 +78,3 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-class Colors {
-    public static int Sunny = 0xFFcfd13d;
-    public static int Cloudy = 0xFFC2C3C1;
-    public static int Rain = 0xFF00A5B1;
-}
